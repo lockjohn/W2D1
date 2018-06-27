@@ -1,5 +1,5 @@
 require "io/console"
-
+require 'byebug'
 KEYMAP = {
   " " => :space,
   "h" => :left,
@@ -32,11 +32,12 @@ MOVES = {
 
 class Cursor
 
-  attr_reader :cursor_pos, :board
+  attr_reader :cursor_pos, :board, :selected
 
   def initialize(cursor_pos, board)
     @cursor_pos = cursor_pos
     @board = board
+    @selected = false
   end
 
   def get_input
@@ -76,8 +77,10 @@ class Cursor
   end
 
   def handle_key(key)
+    # debugger
     case key
     when :return || :space
+      toggle_selected
       cursor_pos
     when :left 
       update_pos(MOVES[key])
@@ -90,15 +93,21 @@ class Cursor
     when :ctrl_c
       Process.exit
     end
-      
-      
   end
 
   def update_pos(diff)
-    if board.is_valid?([@cursor_pos[0] + diff[0],@cursor_pos[1] + diff[1]])
+    new_pos = [@cursor_pos[0] + diff[0], @cursor_pos[1] + diff[1]]
+    if @board.valid_pos?(new_pos)
       @cursor_pos[0] += diff[0]
       @cursor_pos[1] += diff[1]
-    end
-    nil
+    end 
   end
+end
+
+def toggle_selected
+  if @selected == false 
+     @selected = true
+   else
+      @selected = false
+    end
 end

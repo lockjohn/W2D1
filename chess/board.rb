@@ -9,7 +9,6 @@ class Board
   end
   
   def [](pos)
-    # debugger
     x, y = pos
     @grid[x][y]
   end
@@ -22,14 +21,17 @@ class Board
   def populate
     @grid.each.with_index do |row,i|
       row.each_index do |j|
-        if i <= 1 || i >= 6
-          # debugger
-          row[j] = Piece.new([i, j])
+        if i <= 1
+          row[j] = Piece.generate([i, j], self, :black)
+        elsif i >= 6
+          row[j] = Piece.generate([i, j], self, :white)
         else
           row[j] = NullPiece.instance
         end 
       end 
     end 
+    
+    self
   end
   
   def move_piece(start_pos, end_pos)
@@ -48,9 +50,7 @@ class Board
   end
   
   def valid_pos?(pos)
-    return true if pos[0].between?(0,7)
-    return true if pos[1].between?(0,7)
-    false
+    (pos[0].between?(0,7) && pos[1].between?(0,7)) ? true : false
   end
   
 end
